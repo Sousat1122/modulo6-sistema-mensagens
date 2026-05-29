@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang=\"pt\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Guia de Testes - Sistema de Mensagens</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin: 20px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        p, li {
+            margin-bottom: 10px;
+            font-size: 1em;
+            line-height: 1.8;
+        }
+
+        code {
+            background: #282c34;
+            color: #61dafb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #61dafb;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            font-size: 0.9em;
+        }
+
+        .code-block.bash {
+            border-left: 4px solid #667eea;
+        }
+
+        .code-block.output {
+            border-left: 4px solid #4caf50;
+            color: #a8e6a1;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .step {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .step:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 35px;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .step h4 {
+            color: #333;
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .terminal {
+            background: #1a1a1a;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .terminal .prompt {
+            color: #00ff00;
+        }
+
+        .terminal .command {
+            color: #87ceeb;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            color: #2e7d32;
+        }
+
+        .warning {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            color: #e65100;
+        }
+
+        .error {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            color: #c62828;
+        }
+
+        .icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-right: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .card .emoji {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .diagram {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            line-height: 1.8;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        footer {
+            background: #f5f5f5;
+            padding: 30px;
+            text-align: center;
+            border-top: 2px solid #eee;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .diagram {
+                font-size: 0.8em;
+            }
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .checklist li:before {
+            content: \"✓\";
+            position: absolute;
+            left: 0;
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class=\"container\">
+        <header>
+            <h1>🧪 Guia de Testes</h1>
+            <p>Sistema de Mensagens entre Utilizadores - Módulo 6</p>
+        </header>
+
+        <div class=\"content\">
+            <!-- SECÇÃO 1: PRÉ-REQUISITOS -->
+            <section>
+                <h2><span class=\"emoji\">📋</span>Pré-Requisitos</h2>
+                <p>Antes de começar os testes, certifique-se que tem tudo instalado:</p>
+                
+                <div class=\"checklist\">
+                    <ul class=\"checklist\">
+                        <li>PHP 7.4 ou superior</li>
+                        <li>Extensão SQLite3 ativada</li>
+                        <li>Terminal/CMD (PowerShell, Bash, etc.)</li>
+                        <li>Navegador web moderno</li>
+                        <li>Projeto descarregado</li>
+                    </ul>
+                </div>
+
+                <h3>Verificar PHP</h3>
+                <div class=\"code-block bash\">php --version</div>
+
+                <h3>Verificar SQLite</h3>
+                <div class=\"code-block bash\">php -m | grep sqlite</div>
+
+                <div class=\"success\">
+                    ✅ Se ambos os comandos funcionarem, está pronto para começar!
+                </div>
+            </section>
+
+            <!-- SECÇÃO 2: TESTE RÁPIDO -->
+            <section>
+                <h2><span class=\"emoji\">⚡</span>Teste Rápido (5 minutos)</h2>
+                <p>A forma mais simples para testar o sistema.</p>
+
+                <div class=\"step\">
+                    <div>
+                        <span class=\"step-number\">1</span>
+                        <h4>Abrir primeiro Terminal - Servidor TCP</h4>
+                    </div>
+                    <div class=\"code-block bash\">
+cd server<br>
+php server.php
+                    </div>
+                    <div class=\"code-block output\">
+╔════════════════════════════════════════════════════════════╗<br>
+║   SERVIDOR DE MENSAGENS - TCP/IP                   ║<br>
+╚════════════════════════════════════════════════════════════╝<br>
+<br>
+[DB] Conectado a: ../database/messages.db<br>
+[DB] Tabelas inicializadas<br>
+[✓] Servidor iniciado em 127.0.0.1:5555<br>
+[✓] Aguardando conexões...
+                    </div>
+                    <div class=\"success\">
+                        ✅ <strong>Deixe este terminal aberto!</strong>
+                    </div>
+                </div>
+
+                <div class=\"step\">
+                    <div>
+                        <span class=\"step-number\">2</span>
+                        <h4>Abrir segundo Terminal - Interface Web</h4>
+                    </div>
+                    <div class=\"code-block bash\">
+cd client/web<br>
+php -S localhost:8000
+                    </div>
+                    <div class=\"code-block output\">
+Development Server started at http://127.0.0.1:8000
+                    </div>
+                    <p>Abra seu navegador em: <code>http://localhost:8000</code></p>
+                </div>
+
+                <div class=\"step\">
+                    <div>
+                        <span class=\"step-number\">3</span>
+                        <h4>Testar na Interface Web</h4>
+                    </div>
+                    <ol>
+                        <li>Faça login com o nome: <code>joao</code></li>
+                        <li>Abra <strong>outra aba</strong> do navegador em <code>http://localhost:8000</code></li>
+                        <li>Faça login com o nome: <code>maria</code></li>
+                        <li>Na aba do <code>joao</code>: clique em <code>maria</code> na lista de contactos</li>
+                        <li>Escreva uma mensagem: <code>Olá Maria!</code></li>
+                        <li>Clique em <strong>Enviar</strong></li>
+                        <li>Mude para a aba do <code>maria</code> e veja a mensagem</li>
+                        <li>Responda com uma mensagem</li>
+                    </ol>
+                    <div class=\"success\">
+                        ✅ Se viu as mensagens em tempo real, o teste passou!
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECÇÃO 3: TESTE COM CLI -->
+            <section>
+                <h2><span class=\"emoji\">💻</span>Teste com Cliente CLI</h2>
+                <p>Testar a aplicação via linha de comando.</p>
+
+                <div class=\"step\">
+                    <div>
+                        <span class=\"step-number\">1</span>
+                        <h4>Abrir terceiro Terminal - Cliente CLI</h4>
+                    </div>
+                    <div class=\"code-block bash\">
+php client/cli/client.php
+                    </div>
+                    <div class=\"code-block output\">
+╔════════════════════════════════════════════════════════════╗<br>
+║   CLIENTE DE MENSAGENS - CLI/Terminal              ║<br>
+╚════════════════════════════════════════════════════════════╝<br>
+<br>
+Nome de utilizador:
+                    </div>
+                </div>
+
+                <div class=\"step\">
+                    <div>
+                        <span class=\"step-number\">2</span>
+                        <h4>Usar o Menu CLI</h4>
+                    </div>
+                    <p>Digite um nome: <code>pedro</code></p>
+                    <div class=\"code-block output\">
+[✓] Registado como: pedro<br>
+<br>
+────────────────────────────────────────<br>
+1. Ver contactos<br>
+2. Ver conversas<br>
+3. Enviar mensagem<br>
+4. Sair<br>
+────────────────────────────────────────<br>
+Escolha uma opção:
+                    </div>
+                </div>
+
+                <div class=\"step\">
+                    <div>
+                        <span class=\"step-number\">3</span>
+                        <h4>Teste: Enviar Mensagem (opção 3)</h4>
+                    </div>
+                    <div class=\"code-block output\">
+Destinário: joao<br>
+Mensagem: Olá João do Terminal!<br>
+<br>
+[✓] Mensagem enviada para joao
+                    </div>
+                    <p>Volte ao navegador e veja a mensagem aparecer!</p>
+                </div>
+
+                <div class=\"step\">
+                    <div>
+                        <span class=\"step-number\">4</span>
+                        <h4>Teste: Ver Contactos (opção 1)</h4>
+                    </div>
+                    <div class=\"code-block output\">
+📋 CONTACTOS:<br>
+<br>
+  • joao                 (Último acesso: Agora)<br>
+  • maria                (Último acesso: 2 minutos atrás)<br>
+  • pedro                (Último acesso: Agora)
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECÇÃO 4: CENÁRIOS DE TESTE -->
+            <section>
+                <h2><span class=\"emoji\">🎯</span>Cenários de Teste Completos</h2>
+
+                <h3>Cenário 1: Chat Web Básico</h3>
+                <div class=\"step\">
+                    <strong>Objetivo:</strong> Verificar se duas pessoas conseguem trocar mensagens em tempo real
+                    <ol>
+                        <li>Abra 2 abas do navegador</li>
+                        <li>Primeira aba: Login com <code>alice</code></li>
+                        <li>Segunda aba: Login com <code>bob</code></li>
+                        <li>Na aba da <code>alice</code>: clique em <code>bob</code></li>
+                        <li>Envie mensagem: \"Olá Bob\"</li>
+                        <li>Vire para aba do <code>bob</code> e aguarde ~3 segundos</li>
+                    </ol>
+                    <div class=\"success\">
+                        ✅ Esperado: Mensagem aparece em tempo real
+                    </div>
+                </div>
+
+                <h3>Cenário 2: Integração CLI + Web</h3>
+                <div class=\"step\">
+                    <strong>Objetivo:</strong> Verificar se CLI e Web podem comunicar
+                    <ol>
+                        <li>CLI: Envie mensagem para <code>alice</code></li>
+                        <li>Web (alice): Veja a mensagem aparecer</li>
+                        <li>Web (alice): Responda a <code>pedro</code> (usuario CLI)</li>
+                        <li>CLI: Escolha opção 2 para ver conversas</li>
+                    </ol>
+                    <div class=\"success\">
+                        ✅ Esperado: Mensagens sincronizadas entre plataformas
+                    </div>
+                </div>
+
+                <h3>Cenário 3: Histórico de Conversas</h3>
+                <div class=\"step\">
+                    <strong>Objetivo:</strong> Verificar se histórico é mantido após refresh
+                    <ol>
+                        <li>Envie 5 mensagens entre 2 utilizadores</li>
+                        <li>Faça F5 (refresh) na página</li>
+                        <li>Verifique se todas as mensagens continuam lá</li>
+                        <li>Feche a aba e abra novamente o navegador</li>
+                        <li>Faça login novamente</li>
+                    </ol>
+                    <div class=\"success\">
+                        ✅ Esperado: Histórico completo ainda visível
+                    </div>
+                </div>
+
+                <h3>Cenário 4: Lista de Contactos</h3>
+                <div class=\"step\">
+                    <strong>Objetivo:</strong> Verificar se lista atualiza com novos utilizadores
+                    <ol>
+                        <li>Crie 3 utilizadores diferentes</li>
+                        <li>Verifique se todos aparecem na lista</li>
+                        <li>Verifique se mostra \"Último acesso\"</li>
+                        <li>Aguarde 1 minuto sem atividade</li>
+                        <li>Faça refresh e veja tempo atualizado</li>
+                    </ol>
+                    <div class=\"success\">
+                        ✅ Esperado: Lista com todos os utilizadores e tempos corretos
+                    </div>
+                </div>
+
+                <h3>Cenário 5: Responsividade Mobile</h3>
+                <div class=\"step\">
+                    <strong>Objetivo:</strong> Verificar se interface funciona em dispositivos móveis
+                    <ol>
+                        <li>Abra o navegador (F12 ou Dev Tools)</li>
+                        <li>Clique em \"Toggle Device Toolbar\" (ou Ctrl+Shift+M)</li>
+                        <li>Selecione um dispositivo móvel (iPhone, etc.)</li>
+                        <li>Teste envio/receção de mensagens</li>
+                        <li>Verifique se layout adapta-se bem</li>
+                    </ol>
+                    <div class=\"success\">
+                        ✅ Esperado: Interface adaptada, sem overflow horizontal
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECÇÃO 5: VISUALIZAÇÃO DO SERVIDOR -->
+            <section>
+                <h2><span class=\"emoji\">📊</span>Observar Logs do Servidor</h2>
+                <p>No terminal do servidor, veja os eventos em tempo real:</p>
+
+                <div class=\"code-block output\">
+[CONEXÃO] Cliente conectado: 127.0.0.1<br>
+[REGISTO] Novo utilizador: joao<br>
+[REGISTO] Novo utilizador: maria<br>
+[MENSAGEM] joao → maria<br>
+[CONSULTA] maria pediu mensagens<br>
+[MENSAGEM] maria → joao<br>
+[CONSULTA] joao pediu mensagens
+                </div>
+
+                <p>Isso significa que:</p>
+                <ul>
+                    <li>✅ Clientes estão se conectando</li>
+                    <li>✅ Utilizadores estão sendo registados</li>
+                    <li>✅ Mensagens estão sendo enviadas</li>
+                    <li>✅ Servidor está processando comandos</li>
+                </ul>
+            </section>
+
+            <!-- SECÇÃO 6: ESTRUTURA VISUAL -->
+            <section>
+                <h2><span class=\"emoji\">🏗️</span>Estrutura de Teste</h2>
+                <p>Como os componentes devem estar dispostos:</p>
+
+                <div class=\"diagram\">
+┌─ Terminal 1: Servidor ────────────────────────┐<br>
+│ $ cd server                                    │<br>
+│ $ php server.php                               │<br>
+│                                                │<br>
+│ [✓] Servidor iniciado em 127.0.0.1:5555      │<br>
+│ [✓] Aguardando conexões...                    │<br>
+└────────────────────────────────────────────────┘<br>
+         ↓ (TCP Port 5555)<br>
+    ┌────┴────┬────────────┐<br>
+    ↓         ↓            ↓<br>
+┌─────────┐ ┌──────────┐ ┌──────────┐<br>
+│ Browser │ │ Browser  │ │ Terminal │<br>
+│  (joao) │ │  (maria) │ │  (CLI)   │<br>
+│:8000    │ │  :8000   │ │          │<br>
+└─────────┘ └──────────┘ └──────────┘<br>
+     ↓            ↓            ↓<br>
+     └────────────┴────────────┘<br>
+           ↓<br>
+    ┌──────────────────┐<br>
+    │  SQLite Database │<br>
+    │  messages.db     │<br>
+    └──────────────────┘
+                </div>
+            </section>
+
+            <!-- SECÇÃO 7: TABELA DE COMPONENTES -->
+            <section>
+                <h2><span class=\"emoji\">📦</span>Componentes do Sistema</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Comando</th>
+                            <th>Porta/Acesso</th>
+                            <th>Função</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🖥️ Servidor TCP</td>
+                            <td><code>php server/server.php</code></td>
+                            <td>5555</td>
+                            <td>Gerencia conexões e mensagens</td>
+                        </tr>
+                        <tr>
+                            <td>🌐 Web Interface</td>
+                            <td><code>php -S localhost:8000</code></td>
+                            <td>8000</td>
+                            <td>Interface gráfica para chat</td>
+                        </tr>
+                        <tr>
+                            <td>💻 Cliente CLI</td>
+                            <td><code>php client/cli/client.php</code></td>
+                            <td>-</td>
+                            <td>Interface por terminal</td>
+                        </tr>
+                        <tr>
+                            <td>💾 Base de Dados</td>
+                            <td>-</td>
+                            <td>database/messages.db</td>
+                            <td>Armazena mensagens e utilizadores</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- SECÇÃO 8: RESOLUÇÃO DE PROBLEMAS -->
+            <section>
+                <h2><span class=\"emoji\">🔧</span>Resolução de Problemas</h2>
+
+                <h3>❌ Erro: \"Address already in use\"</h3>
+                <div class=\"error\">
+                    <strong>Causa:</strong> Outra aplicação já está usando a porta 5555
+                </div>
+                <p><strong>Solução:</strong></p>
+                <div class=\"code-block bash\">
+# Opção 1: Mude a porta no arquivo server/config.php<br>
+define('SERVER_PORT', 5556);  # Mude para outra porta
+                </div>
+
+                <h3>❌ Erro: \"Call to undefined function sqlite_*\"</h3>
+                <div class=\"error\">
+                    <strong>Causa:</strong> SQLite3 não está ativado no PHP
+                </div>
+                <p><strong>Solução:</strong></p>
+                <div class=\"code-block bash\">
+# Ative SQLite3 em php.ini<br>
+# Descomente a linha:<br>
+extension=sqlite3
+                </div>
+
+                <h3>❌ Erro: \"Permission denied\"</h3>
+                <div class=\"error\">
+                    <strong>Causa:</strong> Sem permissão para criar arquivos
+                </div>
+                <p><strong>Solução (Linux/Mac):</strong></p>
+                <div class=\"code-block bash\">
+chmod -R 755 database/
+                </div>
+
+                <h3>❌ Mensagens não aparecem</h3>
+                <div class=\"error\">
+                    <strong>Causa:</strong> Servidor pode não estar rodando
+                </div>
+                <p><strong>Checklist:</strong></p>
+                <ul>
+                    <li>✓ Servidor está rodando no Terminal 1?</li>
+                    <li>✓ Fez F5 para atualizar a página?</li>
+                    <li>✓ Nomes dos utilizadores são diferentes?</li>
+                    <li>✓ Verifique os logs do servidor</li>
+                </ul>
+
+                <h3>❌ Erro: \"connection refused\"</h3>
+                <div class=\"error\">
+                    <strong>Causa:</strong> Servidor TCP não está acessível
+                </div>
+                <p><strong>Solução:</strong></p>
+                <div class=\"code-block bash\">
+# Verifique se servidor está rodando<br>
+netstat -an | grep 5555  # Linux/Mac<br>
+netstat -an | findstr 5555  # Windows
+                </div>
+            </section>
+
+            <!-- SECÇÃO 9: LISTA DE VERIFICAÇÃO -->
+            <section>
+                <h2><span class=\"emoji\">✅</span>Checklist de Testes</h2>
+                <p>Marque cada teste conforme completa:</p>
+
+                <div style=\"background: white; padding: 20px; border-radius: 10px; margin: 20px 0;\">
+                    <h4>Testes Básicos</h4>
+                    <ul class=\"checklist\">
+                        <li>Servidor TCP inicia sem erros</li>
+                        <li>Interface web abre em localhost:8000</li>
+                        <li>Login funciona</li>
+                        <li>Lista de contactos aparece</li>
+                    </ul>
+
+                    <h4>Comunicação</h4>
+                    <ul class=\"checklist\">
+                        <li>Mensagem enviada web → web</li>
+                        <li>Mensagem enviada web → CLI</li>
+                        <li>Mensagem enviada CLI → web</li>
+                        <li>Histórico mantém-se após refresh</li>
+                    </ul>
+
+                    <h4>Funcionalidades</h4>
+                    <ul class=\"checklist\">
+                        <li>\"Último acesso\" atualiza corretamente</li>
+                        <li>Múltiplos utilizadores funcionam</li>
+                        <li>Menu CLI funciona corretamente</li>
+                        <li>Logout funciona na web</li>
+                    </ul>
+
+                    <h4>Design & Performance</h4>
+                    <ul class=\"checklist\">
+                        <li>Interface é responsiva (mobile)</li>
+                        <li>Cores e layout são claros</li>
+                        <li>Auto-refresh funciona (3 seg)</li>
+                        <li>Sem erros na consola do navegador</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SECÇÃO 10: DICAS -->
+            <section>
+                <h2><span class=\"emoji\">💡</span>Dicas Úteis</h2>
+
+                <div class=\"step\">
+                    <h4>💾 Como Limpar a Base de Dados</h4>
+                    <p>Se quiser começar do zero:</p>
+                    <div class=\"code-block bash\">
+rm database/messages.db<br>
+# Na próxima execução, será criada uma nova BD
+                    </div>
+                </div>
+
+                <div class=\"step\">
+                    <h4>🔍 Ver Base de Dados Diretamente</h4>
+                    <p>Se tem SQLite instalado:</p>
+                    <div class=\"code-block bash\">
+sqlite3 database/messages.db<br>
+.tables  # Ver tabelas<br>
+SELECT * FROM messages;  # Ver mensagens<br>
+SELECT * FROM users;  # Ver utilizadores
+                    </div>
+                </div>
+
+                <div class=\"step\">
+                    <h4>📱 Testar em Outro Computador</h4>
+                    <p>Para testar em rede local:</p>
+                    <ol>
+                        <li>Descubra seu IP: <code>ipconfig</code> (Windows) ou <code>ifconfig</code> (Linux)</li>
+                        <li>Mude em <code>client/web/index.php</code>: <code>SERVER_HOST</code> para seu IP</li>
+                        <li>No outro computador: <code>http://[seu-ip]:8000</code></li>
+                    </ol>
+                </div>
+
+                <div class=\"step\">
+                    <h4>🐛 Modo Debug</h4>
+                    <p>Para mais informação sobre erros:</p>
+                    <div class=\"code-block bash\">
+# Adicione ao início de server.php:<br>
+error_reporting(E_ALL);<br>
+ini_set('display_errors', 1);
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECÇÃO 11: RESUMO -->
+            <section>
+                <h2><span class=\"emoji\">📝</span>Resumo Rápido</h2>
+                <p>O que você precisa fazer para testar:</p>
+
+                <div class=\"grid\">
+                    <div class=\"card\">
+                        <div class=\"emoji\">1️⃣</div>
+                        <h4>Terminal 1</h4>
+                        <code>cd server<br>php server.php</code>
+                        <p style=\"margin-top: 10px; font-size: 0.9em;\">Inicie o servidor</p>
+                    </div>
+
+                    <div class=\"card\">
+                        <div class=\"emoji\">2️⃣</div>
+                        <h4>Terminal 2</h4>
+                        <code>cd client/web<br>php -S localhost:8000</code>
+                        <p style=\"margin-top: 10px; font-size: 0.9em;\">Abra interface web</p>
+                    </div>
+
+                    <div class=\"card\">
+                        <div class=\"emoji\">3️⃣</div>
+                        <h4>Navegador</h4>
+                        <code>localhost:8000</code>
+                        <p style=\"margin-top: 10px; font-size: 0.9em;\">Teste no browser</p>
+                    </div>
+
+                    <div class=\"card\">
+                        <div class=\"emoji\">4️⃣</div>
+                        <h4>Terminal 3 (Opcional)</h4>
+                        <code>php client/cli/client.php</code>
+                        <p style=\"margin-top: 10px; font-size: 0.9em;\">Teste CLI</p>
+                    </div>
+                </div>
+
+                <div class=\"success\" style=\"margin-top: 30px; text-align: center; font-size: 1.1em;\">
+                    ✅ Pronto para testar! Comece pelos testes rápidos acima.
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>📚 Módulo 6 - Programação de Sistemas de Comunicação</p>
+            <p>🎓 Projeto Educacional - 2026</p>
+            <p style=\"margin-top: 15px; color: #999; font-size: 0.9em;\">
+                <a href=\"https://github.com/Sousat1122/modulo6-sistema-mensagens\" style=\"color: #667eea; text-decoration: none;\">
+                    Ver no GitHub →
+                </a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
